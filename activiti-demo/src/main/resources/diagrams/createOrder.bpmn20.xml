@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC"
+	xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+	<process id="createOrder" name="创建订单流程" isExecutable="true">
+		<extensionElements>
+			<activiti:eventListener class="com.taylor.activiti.common.MyEventListener" events="JOB_EXECUTION_FAILURE" />
+		</extensionElements>
+		<startEvent id="start" />
+		<serviceTask id="saveUser" activiti:expression="${orderService.saveOrder(order)}" activiti:resultVariable="message" />
+		<serviceTask id="useCoupon" activiti:expression="${couponService.use(order.orderId)}" />
+		<serviceTask id="sendMessage" activiti:expression="${messageService.send(order.orderId,message)}" activiti:resultVariable="message" />
+
+		<sequenceFlow sourceRef="start" targetRef="saveUser" />
+		<sequenceFlow sourceRef="saveUser" targetRef="useCoupon" />
+		<sequenceFlow sourceRef="useCoupon" targetRef="sendMessage" />
+		<sequenceFlow sourceRef="sendMessage" targetRef="end" />
+		<endEvent id="end" />
+	</process>
+</definitions>
